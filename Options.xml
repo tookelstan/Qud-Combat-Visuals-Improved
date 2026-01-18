@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<options>
+	<option ID="OptionCVICondenseDamage" DisplayText="Condense floating combat text." Category="CombatVisualsImproved" Type="Checkbox" Default="Yes">
+		<helptext>
+            When enabled, all floating combat damage per entity will be condensed into a single summed value.
+
+            Can reduce visual clutter when you or your enemies are hitting multiple times per turn.
+		</helptext>
+	</option>
+	<option ID="OptionCVIRandomTextDirection" DisplayText="Randomize direction of floating combat text" Category="CombatVisualsImproved" Type="Checkbox" Default="No">
+		<helptext>
+            Adds random deviation to the direction of the floating combat text.
+
+            Especially useful if 'Condense floating combat text' is disabled to avoid overlapping text.
+		</helptext>
+	</option>
+	<option ID="OptionCVIReduceMeleeAnimations" DisplayText="Reduce melee animations" Category="CombatVisualsImproved" Type="Checkbox" Default="Yes">
+		<helptext>
+			Limits the amount of melee animations performed per turn.
+
+            Can reduce visual clutter when you or your enemies are hitting multiple times per turn.
+		</helptext>
+	</option>
+      <option ID="OptionCVITextSize" DisplayText="Size of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="10" Increment="1" Default="5"></option>
+      <option ID="OptionCVITextSpeed" DisplayText="Speed of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="10" Increment="1" Default="5"></option>
+</options>

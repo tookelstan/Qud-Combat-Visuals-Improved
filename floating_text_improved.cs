@@ -7,23 +7,46 @@ using System.Reflection.Emit;
 using System.Reflection;
 using XRL;
 using XRL.World;
+using static XRL.UI.Options;
 using UnityEngine;
 using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
 
 [HarmonyPatch]
 [HarmonyDebug]
+[HasOptionFlagUpdate]
 class FloatingTextImproved
 {
+    // Options
+    public static bool OptionCondenseDamage { get; private set; }
+    public static bool OptionRandomTextDirection { get; private set; }
+    public static bool OptionReduceAnimations { get; private set; }
+    //public static int OptionFloatingTextSize { get; private set; }
+    //public static int OptionFloatingTextSpeed { get; private set; }
+
+    [OptionFlagUpdate]
+    public static void UpdateFlags()
+    {
+        OptionCondenseDamage = GetOptionBool("OptionCVICondenseDamage");
+        OptionRandomTextDirection = GetOptionBool("OptionCVIRandomTextDirection");
+        OptionReduceAnimations = GetOptionBool("OptionCVIReduceMeleeAnimations");
+        //OptionFloatingTextSize = int.TryParse(GetOption("OptionCVITextSize", "5"), out value) ? value : 5;
+       // OptionFloatingTextSpeed = int.TryParse(GetOption("OptionCVITextSpeed", "5"), out value) ? value : 5;
+    }
+
     [HarmonyPatch(typeof(CombatJuiceEntryText))]
     [HarmonyPatch(MethodType.Constructor)]
     [HarmonyPatch(new Type[] {typeof(UnityEngine.Vector3), typeof(UnityEngine.Vector3), typeof(float), typeof(string), typeof(Color), typeof(XRL.World.GameObject), typeof(float)})]
     static void Postfix(CombatJuiceEntryText __instance, ref float ___floatTime, ref float ___scale, ref UnityEngine.Vector3 ___endPosition)
     {
         //TODO: Map these to options
+        //___floatTime *= OptionFloatingTextSpeed;
+        //___scale *= OptionFloatingTextSize;
         ___floatTime = 0.75f;
-        //___scale = .75f;
-        ___endPosition = ___endPosition + new UnityEngine.Vector3(UnityEngine.Random.Range(-25f,25f), 0f, 0f);
+        ___scale = 0.75f;
+        if (OptionRandomTextDirection)
+        {
+           ___endPosition += new UnityEngine.Vector3(UnityEngine.Random.Range(-25f,25f), 0f, 0f); 
+        }
     }
 
     [HarmonyPatch(typeof(CombatJuiceEntryText), nameof(CombatJuiceEntryText.canStart))]
@@ -56,8 +79,7 @@ class FloatingTextImproved
             if (entry.GetType() == typeof(CombatJuiceEntryText))
             {
                 CombatJuiceEntryText newEntryText = (CombatJuiceEntryText)entry;
-                UnityEngine.Debug.LogError("" + newEntryText.text);
-                if (isDamageString(newEntryText.text))
+                if (isDamageString(newEntryText.text) && OptionCondenseDamage)
                 {
                     int id = newEntryText.emittingObject._BaseID;
                     if (!damageByID.TryAdd(id, entry))
@@ -76,12 +98,19 @@ class FloatingTextImproved
             } else if (entry.GetType() == typeof(CombatJuiceEntryPunch))
             {
                 CombatJuiceEntryPunch newPunch = (CombatJuiceEntryPunch)entry;
-                ex3DSprite2 target = newPunch.target;
-                punchByVec.TryAdd(target, entry);
+                if (OptionReduceAnimations)
+                {
+                    ex3DSprite2 target = newPunch.target;
+                    punchByVec.TryAdd(target, entry); 
+                } else
+                {
+                    miscEntries.Add(entry);
+                }
+
             } else if (entry.GetType() == typeof(CombatJuiceEntryPrefabAnimation))
             {
                 CombatJuiceEntryPrefabAnimation newPrefab = (CombatJuiceEntryPrefabAnimation)entry;
-                if (newPrefab.animation.Contains("CombatJuice"))
+                if (newPrefab.animation.Contains("CombatJuice") && OptionReduceAnimations)
                 {
                     prefabByVec.TryAdd(newPrefab.location, entry);
                 } else
@@ -97,6 +126,10 @@ class FloatingTextImproved
         {
             ___instance.queue.Enqueue(kvp.Value);
         }
+        for (int i = 0; i < textEntries.Count; i ++)
+        {
+            ___instance.queue.Enqueue(textEntries[i]);
+        }
         foreach (KeyValuePair<ex3DSprite2,CombatJuiceEntry> kvp in punchByVec)
         {
             ___instance.queue.Enqueue(kvp.Value);
@@ -105,10 +138,6 @@ class FloatingTextImproved
         {
             ___instance.queue.Enqueue(kvp.Value);
         }
-        for (int i = 0; i < textEntries.Count; i ++)
-        {
-            ___instance.queue.Enqueue(textEntries[i]);
-        }
         for (int i = 0; i < miscEntries.Count; i ++)
         {
             ___instance.queue.Enqueue(miscEntries[i]);
@@ -116,18 +145,17 @@ class FloatingTextImproved
     }
 
 
-    [HarmonyPatch(typeof(CombatJuiceEntry))]
+/*     [HarmonyPatch(typeof(CombatJuiceEntry))]
     [HarmonyPatch(MethodType.Constructor)]
     [HarmonyPatch(new Type[] {})]
     static void Postfix(CombatJuiceEntry __instance, ref float ___duration)
     {
         //TODO: Map these to options
         ___duration = .075f;
-    }
+    } */
 }
 
-
-[HarmonyPatch]
+/* [HarmonyPatch]
 [HarmonyDebug]
 class FloatingTextImprovedSound
 {
@@ -135,4 +163,4 @@ class FloatingTextImprovedSound
     static void Postfix(ref bool __result) {
         __result = true;
     }
-}
+} */
