@@ -14,7 +14,6 @@ using System.Numerics;
 namespace CombatVisualsImproved
 {
     [HarmonyPatch]
-    [HarmonyDebug]
     [HasOptionFlagUpdate]
     class FloatingTextImproved
     {
