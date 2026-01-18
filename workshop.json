@@ -1,0 +1,8 @@
+{
+  "WorkshopId": 3648837821,
+  "Title": "Combat Visuals Improved",
+  "Description": "Various changes to melee animations and floating combat text.\r\n\r\n-- Melee Animations --\r\nLimits the number of melee animations displayed per turn. Mostly affects builds/npcs that hit multiple times per round.\r\n\r\n-- Floating Combat Text --\r\nAll combat text produced from a single turn is now immediately displayed instead of the default delay between each message.\r\n\r\nOption to condense all damage text per entity into a single number.\r\n\r\nOption to slightly randomize the location/direction of text. This is useful if you choose not to condense damage text.\r\n\r\n**Note**\r\nThis mod relies on Harmony which currently doesn't work on MacOS.",
+  "Tags": "Stable, Script, UX",
+  "Visibility": "2",
+  "ImagePath": "preview.png"
+}
