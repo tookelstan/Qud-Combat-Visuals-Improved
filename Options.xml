@@ -21,6 +21,6 @@
             Can reduce visual clutter when you or your enemies are hitting multiple times per turn.
 		</helptext>
 	</option>
-      <option ID="OptionCVITextSize" DisplayText="Size of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="10" Increment="1" Default="5"></option>
-      <option ID="OptionCVITextSpeed" DisplayText="Speed of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="10" Increment="1" Default="5"></option>
+      <option ID="OptionCVITextSize" DisplayText="Size of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="25" Increment="1" Default="25"></option>
+      <option ID="OptionCVITextSpeed" DisplayText="Speed of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="25" Increment="1" Default="5"></option>
 </options>
