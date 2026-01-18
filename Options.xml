@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <options>
-	<option ID="OptionCVICondenseDamage" DisplayText="Condense floating combat text." Category="CombatVisualsImproved" Type="Checkbox" Default="Yes">
+	<option ID="OptionCVICondenseDamage" DisplayText="Condense floating combat text." Category="CombatVisualsImproved" Type="Checkbox" Default="No">
 		<helptext>
             When enabled, all floating combat damage per entity will be condensed into a single summed value.
 
             Can reduce visual clutter when you or your enemies are hitting multiple times per turn.
 		</helptext>
 	</option>
-	<option ID="OptionCVIRandomTextDirection" DisplayText="Randomize direction of floating combat text" Category="CombatVisualsImproved" Type="Checkbox" Default="No">
+	<option ID="OptionCVIRandomTextDirection" DisplayText="Randomize direction of floating combat text" Category="CombatVisualsImproved" Type="Checkbox" Default="Yes">
 		<helptext>
             Adds random deviation to the direction of the floating combat text.
 
