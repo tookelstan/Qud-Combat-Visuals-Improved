@@ -46,12 +46,13 @@ namespace CombatVisualsImproved
         [HarmonyPatch(new Type[] {typeof(UnityEngine.Vector3), typeof(UnityEngine.Vector3), typeof(float), typeof(string), typeof(Color), typeof(XRL.World.GameObject), typeof(float)})]
         static void Postfix(CombatJuiceEntryText __instance, ref float ___floatTime, ref float ___scale, ref UnityEngine.Vector3 ___endPosition, ref UnityEngine.Vector3 ___startPosition)
         {
-            ___floatTime = OptionFloatingTextSpeed * 0.1f;
+            //___floatTime = 1f + (OptionFloatingTextSpeed > 10 ? OptionFloatingTextSpeed * -1: OptionFloatingTextSpeed);
+            ___floatTime = 0.75f;
             ___scale = ___scale * OptionFloatingTextSize * 0.1f;
             if (OptionRandomTextDirection)
             {
                 ___endPosition += new UnityEngine.Vector3(UnityEngine.Random.Range(-25f,25f), 0f, 0f);
-                ___startPosition +=  new UnityEngine.Vector3(0, UnityEngine.Random.Range(-6f,6f), 0f);
+                ___startPosition +=  new UnityEngine.Vector3(0, UnityEngine.Random.Range(-12f,12f), 0f);
             }
         }
 
@@ -127,6 +128,7 @@ namespace CombatVisualsImproved
                     miscEntries.Add(entry);
                 }
             }
+
             foreach (KeyValuePair<int,CombatJuiceEntry> kvp in damageByID)
             {
                 ___instance.queue.Enqueue(kvp.Value);

@@ -22,5 +22,5 @@
 		</helptext>
 	</option>
       <option ID="OptionCVITextSize" DisplayText="Size of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="25" Increment="1" Default="25"></option>
-      <option ID="OptionCVITextSpeed" DisplayText="Speed of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="25" Increment="1" Default="5"></option>
+      <option ID="OptionCVITextSpeed" DisplayText="Speed of floating combat text" Category="CombatVisualsImproved" Type="Slider" Min="1" Max="25" Increment="1" Default="10"></option>
 </options>
