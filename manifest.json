@@ -1,7 +1,7 @@
 {
   "id": "Combat Visuals Improved",
   "title": "{{r|Combat}} {{r|Visuals}} {{r|Improved}}",
-  "description": "Various improvements to floating combat text and animations/",
-  "version": "0.13",
+  "description": "Various improvements to floating combat text and animations",
+  "version": "0.15",
   "author": "{{R|tooklestan}}"
 }

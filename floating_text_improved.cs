@@ -1,16 +1,17 @@
-using HarmonyLib;
-using ConsoleLib.Console;
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Reflection;
+using System.Numerics;
+using HarmonyLib;
+using ConsoleLib.Console;
 using XRL;
 using XRL.World;
 using static XRL.UI.Options;
 using UnityEngine;
-using System.Numerics;
 
 namespace CombatVisualsImproved
 {
@@ -97,76 +98,78 @@ namespace CombatVisualsImproved
             textEntries.Clear();
             miscEntries.Clear();
 
-            lock (___instance?.queue);
-            while (___instance?.queue?.Count > 0)
-            {
-                CombatJuiceEntry entry = ___instance.queue.Dequeue();
-                if (entry?.GetType() == typeof(CombatJuiceEntryText))
+            lock (___instance?.queue)
+            {  
+                while (___instance?.queue?.Count > 0)
                 {
-                    CombatJuiceEntryText newEntryText = (CombatJuiceEntryText)entry;
-                    if (isDamageString(newEntryText.text) && OptionCondenseDamage)
+                    CombatJuiceEntry entry = ___instance.queue.Dequeue();
+                    if (entry?.GetType() == typeof(CombatJuiceEntryText))
                     {
-                        int id = newEntryText.emittingObject._BaseID;
-                        if (!damageByID.TryAdd(id, entry))
+                        CombatJuiceEntryText newEntryText = (CombatJuiceEntryText)entry;
+                        if (isDamageString(newEntryText.text) && OptionCondenseDamage)
                         {
-                            CombatJuiceEntryText oldEntryText = (CombatJuiceEntryText)damageByID[id];
-                            int total = convertDamageStringToNumber(oldEntryText.text);
-                            int newDamage = convertDamageStringToNumber(newEntryText.text);
-                            total += newDamage;
-                            oldEntryText.text = "-" + total;
-                        } 
-                    } else
+                            int id = newEntryText.emittingObject._BaseID;
+                            if (!damageByID.TryAdd(id, entry))
+                            {
+                                CombatJuiceEntryText oldEntryText = (CombatJuiceEntryText)damageByID[id];
+                                int total = convertDamageStringToNumber(oldEntryText.text);
+                                int newDamage = convertDamageStringToNumber(newEntryText.text);
+                                total += newDamage;
+                                oldEntryText.text = "-" + total;
+                            } 
+                        } else
+                        {
+                            textEntries.Add(entry);
+                        }
+                        
+                    } else if (entry.GetType() == typeof(CombatJuiceEntryPunch))
                     {
-                        textEntries.Add(entry);
-                    }
-                    
-                } else if (entry.GetType() == typeof(CombatJuiceEntryPunch))
-                {
-                    CombatJuiceEntryPunch newPunch = (CombatJuiceEntryPunch)entry;
-                    if (OptionReduceAnimations)
-                    {
-                        ex3DSprite2 target = newPunch.target;
-                        punchByVec.TryAdd(target, entry); 
-                    } else
-                    {
-                        miscEntries.Add(entry);
-                    }
+                        CombatJuiceEntryPunch newPunch = (CombatJuiceEntryPunch)entry;
+                        if (OptionReduceAnimations)
+                        {
+                            ex3DSprite2 target = newPunch.target;
+                            punchByVec.TryAdd(target, entry); 
+                        } else
+                        {
+                            miscEntries.Add(entry);
+                        }
 
-                } else if (entry.GetType() == typeof(CombatJuiceEntryPrefabAnimation))
-                {
-                    CombatJuiceEntryPrefabAnimation newPrefab = (CombatJuiceEntryPrefabAnimation)entry;
-                    if (newPrefab.animation.Contains("CombatJuice") && OptionReduceAnimations)
+                    } else if (entry.GetType() == typeof(CombatJuiceEntryPrefabAnimation))
                     {
-                        prefabByVec.TryAdd(newPrefab.location, entry);
+                        CombatJuiceEntryPrefabAnimation newPrefab = (CombatJuiceEntryPrefabAnimation)entry;
+                        if (newPrefab.animation.Contains("CombatJuice") && OptionReduceAnimations)
+                        {
+                            prefabByVec.TryAdd(newPrefab.location, entry);
+                        } else
+                        {
+                            miscEntries.Add(entry);
+                        }
                     } else
                     {
                         miscEntries.Add(entry);
                     }
-                } else
-                {
-                    miscEntries.Add(entry);
                 }
-            }
 
-            foreach (KeyValuePair<int,CombatJuiceEntry> kvp in damageByID)
-            {
-                ___instance.queue.Enqueue(kvp.Value);
-            }
-            for (int i = 0; i < textEntries.Count; i ++)
-            {
-                ___instance.queue.Enqueue(textEntries[i]);
-            }
-            foreach (KeyValuePair<ex3DSprite2,CombatJuiceEntry> kvp in punchByVec)
-            {
-                ___instance.queue.Enqueue(kvp.Value);
-            }
-            foreach (KeyValuePair<UnityEngine.Vector3,CombatJuiceEntry> kvp in prefabByVec)
-            {
-                ___instance.queue.Enqueue(kvp.Value);
-            }
-            for (int i = 0; i < miscEntries.Count; i ++)
-            {
-                ___instance.queue.Enqueue(miscEntries[i]);
+                foreach (KeyValuePair<int,CombatJuiceEntry> kvp in damageByID)
+                {
+                    ___instance.queue.Enqueue(kvp.Value);
+                }
+                for (int i = 0; i < textEntries.Count; i ++)
+                {
+                    ___instance.queue.Enqueue(textEntries[i]);
+                }
+                foreach (KeyValuePair<ex3DSprite2,CombatJuiceEntry> kvp in punchByVec)
+                {
+                    ___instance.queue.Enqueue(kvp.Value);
+                }
+                foreach (KeyValuePair<UnityEngine.Vector3,CombatJuiceEntry> kvp in prefabByVec)
+                {
+                    ___instance.queue.Enqueue(kvp.Value);
+                }
+                for (int i = 0; i < miscEntries.Count; i ++)
+                {
+                    ___instance.queue.Enqueue(miscEntries[i]);
+                }
             }
         }
         private static UnityEngine.Color OptionColorToUnityColor(string selectedColor)

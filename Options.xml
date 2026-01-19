@@ -21,6 +21,8 @@
             Especially useful if 'Condense floating combat text' is disabled to avoid overlapping text.
 		</helptext>
 	</option>
+	<option ID="OptionCVITextSize" DisplayText="Size of floating combat text" Category="Combat Visuals Improved" Type="Slider" Min="1" Max="25" Increment="1" Default="10"></option>
+	<option ID="OptionCVITextSpeed" DisplayText="Duration/speed of floating combat text (Lower is faster)" Category="Combat Visuals Improved" Type="Slider" Min="1" Max="25" Increment="1" Default="10"></option>
 	<option ID="OptionCVIReduceMeleeAnimations" DisplayText="Reduce melee animations" Category="Combat Visuals Improved" Type="Checkbox" Default="Yes">
 		<helptext>
 			Limits the amount of melee animations performed per turn.
@@ -28,6 +30,4 @@
             Can reduce visual clutter when you or your enemies are hitting multiple times per turn.
 		</helptext>
 	</option>
-      <option ID="OptionCVITextSize" DisplayText="Size of floating combat text" Category="Combat Visuals Improved" Type="Slider" Min="1" Max="25" Increment="1" Default="10"></option>
-	  <option ID="OptionCVITextSpeed" DisplayText="Duration/speed of floating combat text (Lower is faster)" Category="Combat Visuals Improved" Type="Slider" Min="1" Max="25" Increment="1" Default="10"></option>
 </options>
