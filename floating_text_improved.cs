@@ -36,8 +36,8 @@ namespace CombatVisualsImproved
             OptionCondenseDamage = GetOptionBool("OptionCVICondenseDamage");
             OptionRandomTextDirection = GetOptionBool("OptionCVIRandomTextDirection");
             OptionReduceAnimations = GetOptionBool("OptionCVIReduceMeleeAnimations");
-            OptionFloatingTextSize = Convert.ToInt32(GetOption("OptionCVITextSize", "5"));
-            OptionFloatingTextSpeed = Convert.ToInt32(GetOption("OptionCVITextSpeed", "5"));
+            OptionFloatingTextSize = Convert.ToInt32(GetOption("OptionCVITextSize", "10"));
+            OptionFloatingTextSpeed = Convert.ToInt32(GetOption("OptionCVITextSpeed", "10"));
         }
 
         [HarmonyPatch(typeof(CombatJuiceEntryText))]
@@ -45,8 +45,8 @@ namespace CombatVisualsImproved
         [HarmonyPatch(new Type[] {typeof(UnityEngine.Vector3), typeof(UnityEngine.Vector3), typeof(float), typeof(string), typeof(Color), typeof(XRL.World.GameObject), typeof(float)})]
         static void Postfix(CombatJuiceEntryText __instance, ref float ___floatTime, ref float ___scale, ref UnityEngine.Vector3 ___endPosition, ref UnityEngine.Vector3 ___startPosition)
         {
-            //___floatTime = 1f + (OptionFloatingTextSpeed > 10 ? OptionFloatingTextSpeed * -1: OptionFloatingTextSpeed);
-            ___floatTime = 0.75f;
+            //Default is 1.5f
+            ___floatTime = OptionFloatingTextSpeed * 0.1f;
             ___scale = ___scale * OptionFloatingTextSize * 0.1f;
             if (OptionRandomTextDirection)
             {
@@ -55,6 +55,7 @@ namespace CombatVisualsImproved
             }
         }
 
+        //TODO: Change this to transpile method calls only from CombatJuiceManager instead of changing for all calls.
         [HarmonyPatch(typeof(CombatJuiceEntryText), nameof(CombatJuiceEntryText.canStart))]
         static void Postfix(ref bool __result) {
             __result = true;
@@ -149,15 +150,5 @@ namespace CombatVisualsImproved
                 ___instance.queue.Enqueue(miscEntries[i]);
             }
         }
-
-
-    /*     [HarmonyPatch(typeof(CombatJuiceEntry))]
-        [HarmonyPatch(MethodType.Constructor)]
-        [HarmonyPatch(new Type[] {})]
-        static void Postfix(CombatJuiceEntry __instance, ref float ___duration)
-        {
-            //TODO: Map these to options
-            ___duration = .075f;
-        } */
     }
 }
