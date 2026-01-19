@@ -7,6 +7,13 @@
             Can reduce visual clutter when you or your enemies are hitting multiple times per turn.
 		</helptext>
 	</option>
+	<option ID="OptionCVIRecolorText" DisplayText="Recolor floating damage text" Category="Combat Visuals Improved" Type="Checkbox" Default="No">
+		<helptext>
+			When enabled, floating combat text emitted from non-player entities will be changed to the chosen color.
+		</helptext>
+	</option>
+	<option ID="OptionCVIPlayerSourceColor" DisplayText="Incoming damage to player" Category="Combat Visuals Improved" Type="Combo" Values="Black,Blue,Cyan,Magenta,Yellow,White,Orange,Red,Green" Default="Red" Requires="OptionCVIRecolorText==Yes"></option>
+	<option ID="OptionCVIOtherSourceColor" DisplayText="Other/outgoing damage" Category="Combat Visuals Improved" Type="Combo" Values="Black,Blue,Cyan,Magenta,Yellow,White,Orange,Red,Green" Default="White" Requires="OptionCVIRecolorText==Yes"></option>
 	<option ID="OptionCVIRandomTextDirection" DisplayText="Randomize direction of floating combat text" Category="Combat Visuals Improved" Type="Checkbox" Default="Yes">
 		<helptext>
             Adds random deviation to the direction of the floating combat text.

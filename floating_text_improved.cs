@@ -1,4 +1,5 @@
 using HarmonyLib;
+using ConsoleLib.Console;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -19,6 +20,9 @@ namespace CombatVisualsImproved
     {
         // Options
         public static bool OptionCondenseDamage;
+        public static bool OptionRecolorCombatText;
+        public static UnityEngine.Color OptionIncomingColor; //Black,Blue,Cyan,Magenta,Yellow,White,Orange,Red,Green
+        public static UnityEngine.Color OptionOutgoingColor; //Black,Blue,Cyan,Magenta,Yellow,White,Orange,Red,Green
         public static bool OptionRandomTextDirection;
         public static bool OptionReduceAnimations;
         public static int OptionFloatingTextSize;
@@ -34,6 +38,9 @@ namespace CombatVisualsImproved
         public static void UpdateFlags()
         {
             OptionCondenseDamage = GetOptionBool("OptionCVICondenseDamage");
+            OptionRecolorCombatText = GetOptionBool("OptionCVIRecolorText");
+            OptionIncomingColor = OptionColorToUnityColor(GetOption("OptionCVIPlayerSourceColor", "Red"));
+            OptionOutgoingColor = OptionColorToUnityColor(GetOption("OptionCVIOtherSourceColor", "Red"));
             OptionRandomTextDirection = GetOptionBool("OptionCVIRandomTextDirection");
             OptionReduceAnimations = GetOptionBool("OptionCVIReduceMeleeAnimations");
             OptionFloatingTextSize = Convert.ToInt32(GetOption("OptionCVITextSize", "10"));
@@ -43,11 +50,21 @@ namespace CombatVisualsImproved
         [HarmonyPatch(typeof(CombatJuiceEntryText))]
         [HarmonyPatch(MethodType.Constructor)]
         [HarmonyPatch(new Type[] {typeof(UnityEngine.Vector3), typeof(UnityEngine.Vector3), typeof(float), typeof(string), typeof(Color), typeof(XRL.World.GameObject), typeof(float)})]
-        static void Postfix(CombatJuiceEntryText __instance, ref float ___floatTime, ref float ___scale, ref UnityEngine.Vector3 ___endPosition, ref UnityEngine.Vector3 ___startPosition)
+        static void Postfix(ref CombatJuiceEntryText __instance, ref float ___floatTime, ref float ___scale, ref UnityEngine.Vector3 ___endPosition, ref UnityEngine.Vector3 ___startPosition)
         {
             //Default is 1.5f
             ___floatTime = OptionFloatingTextSpeed * 0.1f;
             ___scale = ___scale * OptionFloatingTextSize * 0.1f;
+            if (OptionRecolorCombatText && isDamageString(__instance.text))
+            {
+                if (__instance.emittingObject.IsPlayer())
+                {
+                    __instance.color = OptionIncomingColor;
+                } else
+                {
+                    __instance.color = OptionOutgoingColor;
+                }
+            }
             if (OptionRandomTextDirection)
             {
                 ___endPosition += new UnityEngine.Vector3(UnityEngine.Random.Range(-25f,25f), 0f, 0f);
@@ -79,10 +96,12 @@ namespace CombatVisualsImproved
             prefabByVec.Clear();
             textEntries.Clear();
             miscEntries.Clear();
-            while (___instance.queue.Count > 0)
+
+            lock (___instance?.queue);
+            while (___instance?.queue?.Count > 0)
             {
                 CombatJuiceEntry entry = ___instance.queue.Dequeue();
-                if (entry.GetType() == typeof(CombatJuiceEntryText))
+                if (entry?.GetType() == typeof(CombatJuiceEntryText))
                 {
                     CombatJuiceEntryText newEntryText = (CombatJuiceEntryText)entry;
                     if (isDamageString(newEntryText.text) && OptionCondenseDamage)
@@ -95,7 +114,7 @@ namespace CombatVisualsImproved
                             int newDamage = convertDamageStringToNumber(newEntryText.text);
                             total += newDamage;
                             oldEntryText.text = "-" + total;
-                        }
+                        } 
                     } else
                     {
                         textEntries.Add(entry);
@@ -149,6 +168,44 @@ namespace CombatVisualsImproved
             {
                 ___instance.queue.Enqueue(miscEntries[i]);
             }
+        }
+        private static UnityEngine.Color OptionColorToUnityColor(string selectedColor)
+        {
+            char colorCode;
+            switch (selectedColor)
+            {
+                case "Black":
+                    colorCode = 'K';
+                    break;
+                case "Blue":
+                    colorCode = 'B';
+                    break;
+                case "Cyan":
+                    colorCode = 'C';
+                    break;
+                case "Magenta":
+                    colorCode = 'M';
+                    break;
+                case "Yellow":
+                    colorCode = 'W';
+                    break;
+                case "White":
+                    colorCode = 'Y';
+                    break;
+                case "Orange":
+                    colorCode = 'O';
+                    break;
+                case "Red":
+                    colorCode = 'R';
+                    break;
+                case "Green":
+                    colorCode = 'G';
+                    break;
+                default:
+                    colorCode = 'R';
+                    break;
+            }
+            return ConsoleLib.Console.ColorUtility.colorFromChar(colorCode);
         }
     }
 }
